@@ -6,7 +6,7 @@ import shutil
 import subprocess
 
 src = "/data/0/movies"
-data = "/data/0/util/omdbjson"
+data = "/data/0/util/Copyarr/omdbjson"
 omdbapikey = "e5059e31"
 
 
