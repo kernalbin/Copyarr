@@ -194,8 +194,7 @@ def get_folder_size(path) -> int:
 def byte_to_gig(num: int) -> int:
     return int(num / 1000000000)
 
-# Pull api for new movies, then create main list of all movie_ids
-collect_omdb(src, data_path)
+# Create main list of all movie_ids
 movie_ids = os.listdir(data_path)
 filtered_ids = []
 
@@ -212,6 +211,7 @@ while(not proceed):
         qsep[3]
     except IndexError:
         qsep.append("")
+    whitespaced_value = [x for x in qsep[2:] if x]
 
     # Process commands
 
@@ -220,6 +220,7 @@ while(not proceed):
         print("options:")
         print("help     | show help")
         print("list     | lists selected movies or specify 'list all'")
+        print("refresh  | updates the pulled movies")
         print("add      | YEAR, IMDB, META, IMDBVOTE (<=>) (Value)")
         print("add      | RATED, GENRE, LANG, TITLE (Value)")
         print("remove   | YEAR, IMDB, META, IMDBVOTE (<=>) (Value)")
@@ -241,9 +242,13 @@ while(not proceed):
             for id in filtered_ids:
                 print(get_json(data_path, id)["Title"] + " (" + get_json(data_path, id)["Year"] + ")")
 
+    # Pull api for new movies
+    elif (qsep[0] == "refresh"):
+        collect_omdb(src, data_path)
+
     # ADD - Filter and add movies based on criteria from all movies
     elif (qsep[0] == "add"):
-        new_additions = get_movies_filtered(movie_ids, data_path, qsep[1], qsep[2], qsep[3], qsep[2:])
+        new_additions = get_movies_filtered(movie_ids, data_path, qsep[1], qsep[2], qsep[3], whitespaced_value)
 
         print(str(len(new_additions)) + " movies meet filter")
         if (len(new_additions) > 0):
@@ -260,7 +265,7 @@ while(not proceed):
     
     # REMOVE - Filter and remove movies based on criteria from selected movies
     elif (qsep[0] == "remove"):
-        to_remove = get_movies_filtered(filtered_ids, data_path, qsep[1], qsep[2], qsep[3], qsep[2:])              
+        to_remove = get_movies_filtered(filtered_ids, data_path, qsep[1], qsep[2], qsep[3], whitespaced_value)              
 
         print(str(len(to_remove)) + " movies meet filter")
         if (len(to_remove) > 0):
